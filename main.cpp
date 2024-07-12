@@ -164,6 +164,40 @@ BstNode* Delete(BstNode* root, int data){
     return root;
 }
 
+BstNode* SearchAddress(BstNode* root, int data){
+    if(root == nullptr) return nullptr;
+    else if(root->data == data) return root;
+    else if (data <= root->data) return SearchAddress(root->left, data);
+    else return SearchAddress(root->right, data);
+}
+
+BstNode* GetSuccessor(BstNode* root, int data){
+    //Search for the Node address with the specified data - O(h)
+    BstNode* current = SearchAddress(root, data);
+    if(current == nullptr) return nullptr;
+
+    //Case 1: Node has right subtree
+    else if(current->right != nullptr){
+        return FindMinAddress(current->right); //O(h)
+    }
+
+    //Case 2: No right subtree - O(h)
+    else{
+        BstNode* successor = nullptr;
+        BstNode* ancestor = root;
+        while(ancestor != current){
+            if(current->data < ancestor->data){
+                successor = ancestor; // so far this is the deepest node for which current node is in left
+                ancestor = ancestor->left;
+            }
+            else{
+                ancestor = ancestor->right;
+            }
+        }
+        return successor;
+    }
+}
+
 
 int main(){
 
@@ -215,6 +249,10 @@ int main(){
     std::cout << "New Inorder: ";
     Inorder(root);
     std::cout << std::endl;
+
+    BstNode* successor = nullptr;
+    successor = GetSuccessor(root, 12);
+    std::cout << "Successor of 12 in BST is: " << successor->data << std::endl;
 
     return 0;
 }
